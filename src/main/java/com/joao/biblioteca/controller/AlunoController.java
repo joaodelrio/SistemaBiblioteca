@@ -21,6 +21,10 @@ public class AlunoController {
     //Requisições http
     @Autowired
     private AlunoRepository repository;
+
+    @Autowired
+    private DebitoController debitoController;
+
     @PostMapping
     public ResponseEntity<Aluno> cadastrarAluno(@RequestBody Aluno aluno) {
         return ResponseEntity.ok(repository.save(aluno));
@@ -43,8 +47,7 @@ public class AlunoController {
         return true;
     }
     public boolean verificaDebito(int matricula){
-        DebitoController debito = new DebitoController();
-        return debito.verificarDebito(matricula);
+        return debitoController.verificarDebito(matricula);
     }
 
     // public boolean emprestar()
