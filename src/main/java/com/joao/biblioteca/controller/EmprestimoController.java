@@ -25,6 +25,15 @@ public class EmprestimoController {
     @Autowired
     private EmprestimoRepository repository;
 
+    @Autowired
+    private AlunoController alunoController;
+
+    @Autowired
+    private LivroController livroController;
+
+    @Autowired
+    private ItemEmprestimoController itemEmprestimoController;
+
     //Requisições http
     @PostMapping
     public ResponseEntity<Emprestimo> cadastrarEmprestimo(@RequestBody Emprestimo emprestimo) {
@@ -43,43 +52,102 @@ public class EmprestimoController {
 
     @GetMapping
     public ResponseEntity<List<Emprestimo>> listarTodos() {
+        // Teste
+        // List<Long> idLivro = new ArrayList<Long>();
+        // idLivro.add(1L);
+        // idLivro.add(3L);
+
+        // System.out.println(emprestarLivro(20, idLivro));
         return ResponseEntity.ok(repository.findAll());
     }
     
     //Métodos de negócio
-    // public boolean emprestarLivro(int matricula, List<String> livrosIsbn){
-    //     boolean retorno=true;
-    //     AlunoController alunoController = new AlunoController();
-    //     //Verifica se o aluno está cadastrado
-    //     if(!alunoController.verificaAluno(matricula)){
-    //         System.out.println("Aluno não cadastrado");
-    //         retorno = false;
-    //     }
+    public boolean emprestarLivro(int matricula, List<Long> livrosId){
+        boolean retorno=true;
+        Date dataEmprestimo = new Date();
+        Date dataPrevista = new Date();
+        //Verifica se o aluno está cadastrado
+        if(!alunoController.verificaAluno(matricula)){
+            System.out.println("Aluno não cadastrado");
+            retorno = false;
+        }
         
-    //     //Verifica se o aluno tem débito
-    //     if(!alunoController.verificaDebito(matricula)){
-    //         System.out.println("Aluno com débito");
-    //         retorno = false;
+        //Verifica se o aluno tem débito
+        if(!alunoController.verificaDebito(matricula)){
+            System.out.println("Aluno com débito");
+            retorno = false;
             
-    //     }
-    //     //Cria um emprestimo
-    //     Emprestimo emprestimo = new Emprestimo();
-    //     List<Livro> livros  = new ArrayList<Livro>();
-    //     //Para cada livro
-    //     for (String livro : livrosIsbn) {
-    //         LivroController livroController = new LivroController();
-    //         //Verifica se o livro pode ser emprestado
-    //         if(livroController.verificaLivro(livro)){
-    //             Livro livroAux = livroController.buscarPorIsbn(livro).getBody();
-    //             livros.add(livroAux);
-    //         }
-    //     }
-    //     return retorno;
+        }
+        //Cria um emprestimo
+        Emprestimo emprestimo = new Emprestimo(dataEmprestimo, null, 50.0, alunoController.buscarPorId(matricula).getBody());
+        List<Livro> livros  = new ArrayList<Livro>();
+        if(livrosId.size()<1){
+            System.out.println("Nenhum livro selecionado");
+            retorno = false;
+        }
+
+        //Para cada livro
+        for (Long livro : livrosId) {
+            //Verifica se o livro pode ser emprestado
+            if(livroController.verificaLivro(livro)){
+                Livro livroAux = livroController.buscarPorId(livro).getBody();
+                livros.add(livroAux);
+            }
+            else{
+                System.out.println("Livro não disponível");
+            }
+
+        }
+
+        //Para cada livro
+        List<ItemEmprestimo> itensEmprestimo = new ArrayList<ItemEmprestimo>();
+        for (Livro livro : livros) {
+                //Adiciona o livro ao emprestimo
+                ItemEmprestimo itemEmprestimo = new ItemEmprestimo();
+                itemEmprestimo.setLivro(livro);
+                itensEmprestimo.add(itemEmprestimo);
+                dataPrevista = calculaDataDevolucao(itensEmprestimo);
+                
+        }
+        emprestimo.setDataPrevista(dataPrevista);
+        //Cadastra o emprestimo
+        cadastrarEmprestimo(emprestimo);
+
+        
+        //Cadastra os itens do emprestimo
+        for (ItemEmprestimo itemEmprestimo : itensEmprestimo) {
+            itemEmprestimo.setEmprestimo(emprestimo);
+            itemEmprestimo.setDataPrevista(dataPrevista);
+            itemEmprestimoController.cadastrarItemEmprestimo(itemEmprestimo);
+        }
+        //Teste
+        // System.out.println("Emprestimo ID:" + emprestimo.getIdEmprestimo());
+        // for (ItemEmprestimo itemEmprestimo : itensEmprestimo) {
+        //     System.out.println("ID:" + itemEmprestimo.getIdItemEmp());
+        //     System.out.println("Data Devolução:" + itemEmprestimo.getDataDevolucao());
+        //     System.out.println("Data Prevista:" + itemEmprestimo.getDataPrevista());
+        //     System.out.println("ID Livro:" + itemEmprestimo.getLivro().getIdLivro());
+        //     System.out.println("ID Emprestimo:" + itemEmprestimo.getEmprestimo().getIdEmprestimo());
+        // }
+
+
+        return retorno;
     
-    // }
+    }
         
 
-    // public Date calculaDataDevolucao(){
-    //     Emprestimo.getItemEmprestimo();
-    // }
+    public Date calculaDataDevolucao(List<ItemEmprestimo> itensEmprestimo){
+        Date dataEmprestimo = new Date();
+        Date data_aux = itemEmprestimoController.calculaDataDevolucaoItem(dataEmprestimo, itensEmprestimo.get(0));
+        Date data_atual;
+        for (ItemEmprestimo item: itensEmprestimo) {
+            data_atual = itemEmprestimoController.calculaDataDevolucaoItem(dataEmprestimo, item);
+            if(data_atual.after(data_aux)){
+                data_aux = data_atual;
+            }
+        }
+        
+        return data_aux;
+
+    }
 }

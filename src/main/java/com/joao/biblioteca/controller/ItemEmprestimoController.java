@@ -38,13 +38,14 @@ public class ItemEmprestimoController {
     }
 
     // Metodos de negocio
-    public Date calculaDataDevolucao(Date data, ItemEmprestimo item) {
+    public Date calculaDataDevolucaoItem(Date data, ItemEmprestimo item) {
         Integer prazo = item.getLivro().getTitulo().getPrazo();
         Date dataDevolucao = data;
         Calendar c = Calendar.getInstance();
         c.setTime(dataDevolucao);
         c.add(Calendar.DATE, prazo);
         dataDevolucao = c.getTime();
+        item.setDataDevolucao(dataDevolucao);
         return dataDevolucao;
     }
 }

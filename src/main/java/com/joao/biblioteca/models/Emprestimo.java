@@ -1,6 +1,6 @@
 package com.joao.biblioteca.models;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -26,7 +26,7 @@ public class Emprestimo {
     private Long idEmprestimo;
     private Date dataEmprestimo;
     private Date dataPrevista;
-    private Float multa;
+    private double multa;
     // private Date dataDevolucao;
     @ManyToOne
     @JoinColumn(name = "aluno_matricula", referencedColumnName = "matricula")
@@ -34,5 +34,12 @@ public class Emprestimo {
     // @OneToMany
     // @JoinColumn(name = "id_itememprestimo")
     // private List<ItemEmprestimo> itemEmprestimo;
+
+    public Emprestimo(Date dataEmprestimo, Date dataPrevista, double multa, Aluno aluno) {
+        this.dataEmprestimo = dataEmprestimo;
+        this.dataPrevista = dataPrevista;
+        this.multa = multa;
+        this.aluno = aluno;
+    }
 
 }
