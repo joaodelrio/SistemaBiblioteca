@@ -1,7 +1,9 @@
 package com.joao.biblioteca.controller;
 
+import java.util.Date;
 import java.util.List;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.joao.biblioteca.models.Livro;
 import com.joao.biblioteca.models.Titulo;
+import com.joao.biblioteca.repository.ItemEmprestimoRepository;
 import com.joao.biblioteca.repository.LivroRepository;
 import com.joao.biblioteca.repository.TituloRepository;
 
@@ -27,6 +30,9 @@ public class LivroController {
 
     @Autowired
     private TituloRepository tituloRepository;
+
+    @Autowired
+    private ItemEmprestimoRepository itemEmprestimoRepository;
 
     @PostMapping
     public ResponseEntity<Livro> cadastrarLivro(@RequestBody Livro livro) {
@@ -50,7 +56,7 @@ public class LivroController {
 
 
     // Metodos de negocio
-    public Boolean verificaLivro(Long id){
+    public Boolean verificaLivro(Long id) throws BadRequestException{
         //Verifica se o livro já está cadastrado
         if (repository.findById(id) == null) {
             return false;
@@ -58,11 +64,13 @@ public class LivroController {
         Livro livro = repository.findById(id);
         //Verifica se o livro está disponivel
         if(livro.getDisponivel() == false){
-            return false;
+            // Pega a data de devolução do livro
+            Date dataDevolucao = itemEmprestimoRepository.findByLivroId(id).getDataDevolucao();
+            throw new BadRequestException("Livro não está disponível, data de devolução: " + dataDevolucao);
         }
         //Verifica se é exemplar
         if(livro.getExemplarBiblioteca() == true){
-            return false;
+            throw new BadRequestException("Livro é exemplar da biblioteca");
         }
         return true;
     }

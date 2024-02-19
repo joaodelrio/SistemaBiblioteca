@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.joao.biblioteca.models.Aluno;
 import com.joao.biblioteca.models.Emprestimo;
 import com.joao.biblioteca.models.ItemEmprestimo;
 import com.joao.biblioteca.models.Livro;
@@ -51,41 +51,38 @@ public class EmprestimoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Emprestimo>> listarTodos() {
+    public ResponseEntity<List<Emprestimo>> listarTodos() throws BadRequestException{
         // Teste
         // List<Long> idLivro = new ArrayList<Long>();
         // idLivro.add(1L);
-        // idLivro.add(3L);
 
         // System.out.println(emprestarLivro(20, idLivro));
         return ResponseEntity.ok(repository.findAll());
     }
     
     //Métodos de negócio
-    public boolean emprestarLivro(int matricula, List<Long> livrosId){
-        boolean retorno=true;
+    public boolean emprestarLivro(int matricula, List<Long> livrosId) throws BadRequestException{
         Date dataEmprestimo = new Date();
         Date dataPrevista = new Date();
         //Verifica se o aluno está cadastrado
         if(!alunoController.verificaAluno(matricula)){
-            System.out.println("Aluno não cadastrado");
-            retorno = false;
+            throw new BadRequestException("Aluno não cadastrado");
         }
         
         //Verifica se o aluno tem débito
         if(!alunoController.verificaDebito(matricula)){
-            System.out.println("Aluno com débito");
-            retorno = false;
+            throw new BadRequestException("Aluno com débito");
             
         }
         //Cria um emprestimo
         Emprestimo emprestimo = new Emprestimo(dataEmprestimo, null, 50.0, alunoController.buscarPorId(matricula).getBody());
+
         List<Livro> livros  = new ArrayList<Livro>();
         if(livrosId.size()<1){
-            System.out.println("Nenhum livro selecionado");
-            retorno = false;
+            throw new BadRequestException("Nenhum livro selecionado");
         }
 
+        
         //Para cada livro
         for (Long livro : livrosId) {
             //Verifica se o livro pode ser emprestado
@@ -94,10 +91,12 @@ public class EmprestimoController {
                 livros.add(livroAux);
             }
             else{
-                System.out.println("Livro não disponível");
+                //Caso o livro não esteja disponível
+                throw new BadRequestException("Livro não existe ou não está disponível");
             }
 
         }
+
 
         //Para cada livro
         List<ItemEmprestimo> itensEmprestimo = new ArrayList<ItemEmprestimo>();
@@ -107,6 +106,7 @@ public class EmprestimoController {
                 itemEmprestimo.setLivro(livro);
                 itensEmprestimo.add(itemEmprestimo);
                 dataPrevista = calculaDataDevolucao(itensEmprestimo);
+                livro.setDisponivel(false);
                 
         }
         emprestimo.setDataPrevista(dataPrevista);
@@ -131,7 +131,7 @@ public class EmprestimoController {
         // }
 
 
-        return retorno;
+        return true;
     
     }
         

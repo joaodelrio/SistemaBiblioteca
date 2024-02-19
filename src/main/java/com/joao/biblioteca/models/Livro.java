@@ -1,7 +1,5 @@
 package com.joao.biblioteca.models;
 
-import com.joao.biblioteca.controller.TituloController;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

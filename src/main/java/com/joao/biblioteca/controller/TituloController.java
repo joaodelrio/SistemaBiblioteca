@@ -46,9 +46,7 @@ public class TituloController {
         @PathVariable(value = "isbn") String isbn, 
         @PathVariable(value = "id") Long id) {
         Titulo titulo = repository.findByIsbn(isbn);
-        System.out.println(titulo);
         Autor autor = autorRepository.findById(id);
-        System.out.println(autor);
         titulo.getAutores().add(autor);
         return ResponseEntity.ok(repository.save(titulo));
     }

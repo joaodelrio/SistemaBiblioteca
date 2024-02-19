@@ -49,6 +49,4 @@ public class AlunoController {
     public boolean verificaDebito(int matricula){
         return debitoController.verificarDebito(matricula);
     }
-
-    // public boolean emprestar()
 }
