@@ -1,6 +1,6 @@
 package com.joao.biblioteca.models;
 
-import java.sql.Date;
+import java.util.Date;
 
 
 import jakarta.persistence.Entity;

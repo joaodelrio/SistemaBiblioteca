@@ -18,6 +18,7 @@ import com.joao.biblioteca.models.Emprestimo;
 import com.joao.biblioteca.models.ItemEmprestimo;
 import com.joao.biblioteca.models.Livro;
 import com.joao.biblioteca.repository.EmprestimoRepository;
+import com.joao.biblioteca.repository.LivroRepository;
 
 @RestController
 @RequestMapping("/emprestimo")
@@ -30,6 +31,9 @@ public class EmprestimoController {
 
     @Autowired
     private LivroController livroController;
+
+    @Autowired
+    private LivroRepository livroRepository;
 
     @Autowired
     private ItemEmprestimoController itemEmprestimoController;
@@ -46,7 +50,7 @@ public class EmprestimoController {
     }
 
     @GetMapping("aluno/{matricula}")
-    public ResponseEntity<Emprestimo> buscarPorMatricula(@PathVariable(value = "matricula") int matricula) {
+    public ResponseEntity<List<Emprestimo>> buscarPorMatricula(@PathVariable(value = "matricula") int matricula) {
         return ResponseEntity.ok(repository.findByMatricula(matricula));
     }
 
@@ -54,9 +58,9 @@ public class EmprestimoController {
     public ResponseEntity<List<Emprestimo>> listarTodos() throws BadRequestException{
         // Teste
         // List<Long> idLivro = new ArrayList<Long>();
-        // idLivro.add(1L);
+        // idLivro.add(3L);
 
-        // System.out.println(emprestarLivro(20, idLivro));
+        // System.out.println(emprestarLivro(987, idLivro));
         return ResponseEntity.ok(repository.findAll());
     }
     
@@ -130,6 +134,11 @@ public class EmprestimoController {
         //     System.out.println("ID Emprestimo:" + itemEmprestimo.getEmprestimo().getIdEmprestimo());
         // }
 
+        // Indisponibiliza os livros
+        for (Livro livro : livros) {
+            livro.setDisponivel(false);
+            livroRepository.update(livro);
+        }
 
         return true;
     

@@ -17,8 +17,8 @@ public class DebitoRepository implements DebitoDao{
     private EntityManager entityManager;
 
     @Override
-    public Debito findByMatricula(int matricula) {
-        return entityManager.createQuery("SELECT a FROM debito a WHERE a.aluno.matricula = :matricula", Debito.class).setParameter("matricula", matricula).getSingleResult();
+    public List<Debito> findByMatricula(int matricula) {
+        return entityManager.createQuery("SELECT a FROM debito a WHERE a.aluno.matricula = :matricula", Debito.class).setParameter("matricula", matricula).getResultList();
     }
 
     @Override

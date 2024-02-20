@@ -7,6 +7,6 @@ import com.joao.biblioteca.models.Emprestimo;
 public interface EmprestimoDao {
     Emprestimo save(Emprestimo emprestimo);
     Emprestimo findById(Long id);
-    Emprestimo findByMatricula(int matricula);
+    List<Emprestimo> findByMatricula(int matricula);
     List<Emprestimo> findAll();
 }

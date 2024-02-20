@@ -32,7 +32,7 @@ public class DebitoController {
     }
 
     @GetMapping("aluno/{matricula}")
-    public ResponseEntity<Debito> listarPorMatricula(@PathVariable(value = "matricula") int matricula) {
+    public ResponseEntity<List<Debito>> listarPorMatricula(@PathVariable(value = "matricula") int matricula) {
         return ResponseEntity.ok(repository.findByMatricula(matricula));
     }
     @GetMapping
@@ -42,8 +42,8 @@ public class DebitoController {
 
     //Metodos de negocio
     public boolean verificarDebito(int matricula){
-        Debito debito = repository.findByMatricula(matricula);
-        if(debito == null){
+        List<Debito> debito = repository.findByMatricula(matricula);
+        if(debito.size()>0){
             return false;
         }
         return true;

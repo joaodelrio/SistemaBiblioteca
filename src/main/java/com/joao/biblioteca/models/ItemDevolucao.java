@@ -32,4 +32,6 @@ public class ItemDevolucao {
     @ManyToOne
     @JoinColumn(name = "id_livro", referencedColumnName = "idLivro")
     private Livro livro;
+
+    
 }

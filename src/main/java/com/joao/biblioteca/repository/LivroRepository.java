@@ -39,4 +39,10 @@ public class LivroRepository implements LivroDao {
         return entityManager.createQuery("SELECT a FROM livro a", Livro.class).getResultList();
     }
 
+    @Transactional
+    @Override
+    public Livro update(Livro livro) {
+        return entityManager.merge(livro);
+    }
+
 }

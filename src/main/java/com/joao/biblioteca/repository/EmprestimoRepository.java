@@ -29,8 +29,8 @@ public class EmprestimoRepository implements EmprestimoDao{
     }
 
     @Override
-    public Emprestimo findByMatricula(int matricula) {
-        return entityManager.createQuery("SELECT e FROM emprestimo e WHERE e.aluno.matricula = :matricula", Emprestimo.class).setParameter("matricula", matricula).getSingleResult();
+    public List<Emprestimo> findByMatricula(int matricula) {
+        return entityManager.createQuery("SELECT e FROM emprestimo e WHERE e.aluno.matricula = :matricula", Emprestimo.class).setParameter("matricula", matricula).getResultList();
     }
 
     @Override

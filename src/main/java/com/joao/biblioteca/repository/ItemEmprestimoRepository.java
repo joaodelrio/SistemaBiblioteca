@@ -34,6 +34,11 @@ public class ItemEmprestimoRepository implements ItemEmprestimoDao{
     }
 
     @Override
+    public List<ItemEmprestimo> findByEmprestimosId(Long id) {
+        return entityManager.createQuery("SELECT a FROM item_emprestimo a WHERE a.emprestimo.id = :id", ItemEmprestimo.class).setParameter("id", id).getResultList();
+    }
+
+    @Override
     public List<ItemEmprestimo> findAll() {
         return entityManager.createQuery("SELECT a FROM item_emprestimo a", ItemEmprestimo.class).getResultList();
     }

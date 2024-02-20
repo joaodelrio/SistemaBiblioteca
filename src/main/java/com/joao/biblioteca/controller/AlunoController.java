@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.joao.biblioteca.models.Aluno;
 import com.joao.biblioteca.repository.AlunoRepository;
+import com.joao.biblioteca.repository.EmprestimoRepository;
 
 @RestController
 @RequestMapping("/aluno")
@@ -24,6 +25,9 @@ public class AlunoController {
 
     @Autowired
     private DebitoController debitoController;
+
+    @Autowired
+    private EmprestimoRepository emprestimoRepository;
 
     @PostMapping
     public ResponseEntity<Aluno> cadastrarAluno(@RequestBody Aluno aluno) {
@@ -49,4 +53,12 @@ public class AlunoController {
     public boolean verificaDebito(int matricula){
         return debitoController.verificarDebito(matricula);
     }
+    public boolean verificaEmprestimo(int matricula){
+        System.out.println(emprestimoRepository.findByMatricula(matricula));
+        if(emprestimoRepository.findByMatricula(matricula).size() < 1){
+            return false;
+        }
+        return true;
+    }
+    
 }
