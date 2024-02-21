@@ -1,0 +1,82 @@
+.container-home {
+    /* Centralização horizontal e vertical */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Faz com que o container ocupe toda a altura da tela */
+
+    /* Fundo do container */
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+    
+    /* Opcional: sombra para destacar o container */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .titulo {
+    /* Posicionamento absoluto para sobrepor o título ao container */
+    position: absolute;
+    top: 50px; /* Distância do topo do container */
+    left: 50px; /* Distância da esquerda do container */
+    color: black;
+
+    margin-top: 20px;
+    
+    /* Opcional: personalize o estilo do título */
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .container-fundo {
+    /* Define o container como um quadrado */
+    width: 400px; /* Ajuste a largura conforme necessário */
+    height: 400px;
+    background-color: #a6caf0; /* Cor de fundo do container */
+    border-radius: 10px; /* Arredonda os cantos */
+    margin: 0 auto; /* Centraliza o container na tela */
+    /* Sombreamento */
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+
+    /* Centralização dos botões */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: relative; /* Necessário para posicionar os botões */
+  }
+  
+  .botoes {
+    /* Alinha com o centro da div*/
+    position: absolute;
+
+  }
+
+  .botoes button {
+    margin: 0 10px; /* 10px margin on all sides */
+    width: 120px;
+    height: 50px;
+  }
+  
+  
+  
+/* Media queries para ajustar o layout em telas menores */
+
+@media (max-width: 768px) {
+    .container {
+      width: 300px;
+      height: 300px;
+    }
+    
+    .titulo {
+      top: 30px;
+      left: 30px;
+    }
+    
+    .botoes {
+      bottom: 30px;
+      left: 30px;
+    }
+  }
+  
